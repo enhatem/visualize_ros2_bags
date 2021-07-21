@@ -45,6 +45,10 @@ qx = np.empty(0)
 qy = np.empty(0)
 qz = np.empty(0)
 
+Thrust = np.empty(0)
+wx     = np.empty(0)
+wy     = np.empty(0)
+wz     = np.empty(0)
 
 topics = rosbag_extract.deserialize_rosbag('ros_bags/rosbag2_2021_07_21-18_11_48.bag/rosbag2_2021_07_21-18_11_48_0.db3')
 print(f'length of msg: {len(topics)}')
@@ -85,6 +89,15 @@ for timestamp, msg in (topics["/Drone1/EKF/odom"]):
             vy = np.append(vy, msg.twist.twist.linear.y)
             vz = np.append(vz, msg.twist.twist.linear.z)
 
+for timestamp, msg in (topics["/Drone1/RatesThrustSetPoint"]):
+        if timestamp >= start_time:
+            # time = np.append(time, timestamp)
+            Thrust  = np.append(Thrust, msg.thrust)
+            wx  = np.append(wx, msg.rates[0])
+            wy  = np.append(wy, msg.rates[1])
+            wz  = np.append(wz, msg.rates[2])
+
+
 # converting quaterions to Euler angles
 angles_real = np.zeros((time.shape[0], 3))
 quat = np.array([qw,qx,qy,qz]).T
@@ -112,6 +125,11 @@ psi_real   = psi_real[:len(x_ref)]
 vx = vx[:len(vx_ref)]
 vy = vy[:len(vy_ref)]
 vz = vz[:len(vz_ref)]
+
+Thrust  = Thrust[:len(x_ref)]
+wx      = wx[:len(x_ref)]
+wy      = wy[:len(x_ref)]
+wz      = wz[:len(x_ref)]
 
 time = (time -time[0])* 1e-9
 # plt.style.use('seaborn')
@@ -181,7 +199,7 @@ ax9.legend()
 
 # plot 3D simulation
 fig4, ax10 = plt.subplots()
-plt.title('Reference trajectory')
+ax10.set_title('Performed Trajectory')
 ax10 = plt.axes(projection = "3d")
 ax10.plot3D(x, y, z, label='traj')
 ax10.plot3D(x_ref, y_ref, z_ref, label='ref_traj')
@@ -205,11 +223,68 @@ for step in range(NUM_STEPS):
             q = [qw[step], qx[step], qy[step], qz[step]]
             plotDrone3D(ax10,X,q)
 
-
-
-
 axisEqual3D(ax10)
 
+
+# Plot the thrust
+fig5, ax10 = plt.subplots()
+ax10.set_title('Thrust Input')
+ax10.plot(time,Thrust,label='Thrust')
+ax10.plot(time,ref_U[:,0],label='Thrust_ref')
+
+ax10.set_xlabel('Time [s]')
+ax10.set_ylabel('Thrust [N]')
+ax10.legend()
+
+# Plot the rates
+fig6, (ax11,ax12,ax13) = plt.subplots(nrows=3, ncols=1, sharex=True)
+ax11.set_title('Angular rates Inputs')
+
+ax11.plot(time,wx,label='$\omega_x$')
+ax11.set_ylabel('$\omega_x$ [N]')
+ax11.legend()
+
+ax12.plot(time,wy,label='$\omega_y$')
+ax12.set_ylabel('$\omega_y$ [N]')
+ax12.legend()
+
+ax13.plot(time,wz,label='$\omega_z$')
+ax13.set_xlabel('Time [s]')
+ax13.set_ylabel('$\omega_z$ [N]')
+ax13.legend()
+
+# Plot Errors
+x_err = x - x_ref
+y_err = y - y_ref
+z_err = z - z_ref
+
+vx_err = vx - vx_ref
+vy_err = vy - vy_ref
+vz_err = vz - vz_ref
+
+fig7, (ax14,ax15,ax16) = plt.subplots(nrows=3, ncols=1, sharex=True)
+ax14.set_title('Errors on the Position States')
+ax14.plot(time,x_err, label='x_error')
+ax14.set_ylabel('x_error[m]')
+
+ax15.plot(time,y_err, label='y_error')
+ax15.set_ylabel('y_error[m]')
+
+ax16.plot(time,z_err, label='z_error')
+ax16.set_ylabel('z_error[m]')
+ax16.set_xlabel('Time [s]')
+
+fig8, (ax17,ax18,ax19) = plt.subplots(nrows=3, ncols=1, sharex=True)
+ax17.set_title('Errors on the Linear Velocity States')
+ax17.plot(time,vx_err, label='vx_error')
+ax17.set_ylabel('vx_error[m/s]')
+
+ax18.plot(time,vy_err, label='vy_error')
+ax18.set_ylabel('vy_error[m/s]')
+
+ax19.plot(time,vz_err, label='vz_error')
+ax19.set_ylabel('vz_error[m/s]')
+ax19.set_xlabel('Time [s]')
 
 plt.show()
 
