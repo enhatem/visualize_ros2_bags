@@ -155,6 +155,8 @@ ax1.legend()
 ax2.legend()
 ax3.legend()
 
+fig1.savefig('figures/posStates.png', dpi=300)
+
 fig2, (ax4, ax5, ax6) = plt.subplots(nrows=3, ncols=1, sharex=True)
 ax4.plot(time, vx, label='vx')
 ax4.plot(time, vx_ref, label='vx_ref')
@@ -177,6 +179,9 @@ ax4.legend()
 ax5.legend()
 ax6.legend()
 
+fig2.savefig('figures/velStates.png', dpi=300)
+
+
 fig3, (ax7, ax8, ax9) = plt.subplots(nrows=3, ncols=1, sharex=True)
 
 ax7.plot(time, phi_real, label='phi')
@@ -196,10 +201,11 @@ ax7.legend()
 ax8.legend()
 ax9.legend()
 
+fig3.savefig('figures/angleStates.png', dpi=300)
+
 
 # plot 3D simulation
 fig4, ax10 = plt.subplots()
-ax10.set_title('Performed Trajectory')
 ax10 = plt.axes(projection = "3d")
 ax10.plot3D(x, y, z, label='traj')
 ax10.plot3D(x_ref, y_ref, z_ref, label='ref_traj')
@@ -225,6 +231,10 @@ for step in range(NUM_STEPS):
 
 axisEqual3D(ax10)
 
+ax10.set_title('Performed Trajectory')
+
+fig4.savefig('figures/performedTraj.png', dpi=300)
+
 
 # Plot the thrust
 fig5, ax10 = plt.subplots()
@@ -235,6 +245,9 @@ ax10.plot(time,ref_U[:,0],label='Thrust_ref')
 ax10.set_xlabel('Time [s]')
 ax10.set_ylabel('Thrust [N]')
 ax10.legend()
+
+fig5.savefig('figures/thrustInput.png', dpi=300)
+
 
 # Plot the rates
 fig6, (ax11,ax12,ax13) = plt.subplots(nrows=3, ncols=1, sharex=True)
@@ -252,6 +265,9 @@ ax13.plot(time,wz,label='$\omega_z$')
 ax13.set_xlabel('Time [s]')
 ax13.set_ylabel('$\omega_z$ [N]')
 ax13.legend()
+
+fig6.savefig('figures/angulareRatesInputs.png', dpi=300)
+
 
 # Plot Errors
 x_err = x - x_ref
@@ -274,6 +290,8 @@ ax16.plot(time,z_err, label='z_error')
 ax16.set_ylabel('z_error[m]')
 ax16.set_xlabel('Time [s]')
 
+fig7.savefig('figures/Errors_position.png', dpi=300)
+
 fig8, (ax17,ax18,ax19) = plt.subplots(nrows=3, ncols=1, sharex=True)
 ax17.set_title('Errors on the Linear Velocity States')
 ax17.plot(time,vx_err, label='vx_error')
@@ -285,6 +303,9 @@ ax18.set_ylabel('vy_error[m/s]')
 ax19.plot(time,vz_err, label='vz_error')
 ax19.set_ylabel('vz_error[m/s]')
 ax19.set_xlabel('Time [s]')
+
+fig8.savefig('figures/Errors_velocities.png', dpi=300)
+
 
 plt.show()
 
