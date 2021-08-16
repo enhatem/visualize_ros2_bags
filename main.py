@@ -1,4 +1,4 @@
-from ls2n_tools import rosbag_extract
+from rosbag_extract import deserialize_rosbag
 from pyquaternion import Quaternion
 import matplotlib.pyplot as plt
 import numpy as np
@@ -50,7 +50,7 @@ wx     = np.empty(0)
 wy     = np.empty(0)
 wz     = np.empty(0)
 
-topics = rosbag_extract.deserialize_rosbag('ros_bags/rosbag2_2021_07_21-18_11_48.bag/rosbag2_2021_07_21-18_11_48_0.db3')
+topics = deserialize_rosbag('/home/elie/CORO-IMARO/M2/Semester2/Coding/my_master_thesis/visualize_ros2_bags/reference_trajectories/globalsearch_2/rosbag2_2021_08_16-09_02_14/rosbag2_2021_08_16-09_02_14_0.db3')
 print(f'length of msg: {len(topics)}')
 print(f'msg keys: {topics.keys()}')
 
@@ -59,7 +59,7 @@ print(f'msg keys: {topics.keys()}')
 
 time_ = np.empty(0)
 starting_command = np.empty(0)
-for timestamp, msg in (topics["/Drone1/hover"]):
+for timestamp, msg in (topics["/Drone1/track"]):
     time_ = np.append(time_, timestamp)
     starting_command = np.append(starting_command, msg)
 # print(msg['/Drone1/RatesThrustSetPoint'])

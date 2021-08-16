@@ -54,8 +54,8 @@ def axisEqual3D(ax):
 def readTrajectory():
         
         # import csv file of measX and simU (noisy measurement)
-        ref_traj = pd.read_csv('/home/elie/ros_ws/src/ls2n_drone_ros2/ls2n_crazyflie_nmpc/traj/pol_9/J=u1/measX.csv')
-        ref_U = pd.read_csv('/home/elie/ros_ws/src/ls2n_drone_ros2/ls2n_crazyflie_nmpc/traj/pol_9/J=u1/simU.csv')
+        ref_traj = pd.read_csv('/home/elie/CORO-IMARO/M2/Semester2/Coding/my_master_thesis/visualize_ros2_bags/reference_trajectories/globalsearch_1/measX.csv')
+        ref_U = pd.read_csv('/home/elie/CORO-IMARO/M2/Semester2/Coding/my_master_thesis/visualize_ros2_bags/reference_trajectories/globalsearch_1/simU.csv')
 
         # ref_traj = pd.read_csv('/home/elie/ros_ws/src/ls2n_drone_ros2/ls2n_crazyflie_nmpc/traj/pol_9/patternsearch/measX.csv')
         # ref_U = pd.read_csv('/home/elie/ros_ws/src/ls2n_drone_ros2/ls2n_crazyflie_nmpc/traj/pol_9/patternsearch/simU.csv')
