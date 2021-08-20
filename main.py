@@ -55,7 +55,8 @@ wx     = np.empty(0)
 wy     = np.empty(0)
 wz     = np.empty(0)
 
-topics = deserialize_rosbag('/home/elie/visualize_ros2_bags/ros_bags/simulations/sim20/rosbag2_2021_08_20-18_07_26/rosbag2_2021_08_20-18_07_26_0.db3')
+# sim21 has a weight of 60 on z which causes the thrust control input to oscillate
+topics = deserialize_rosbag('/home/elie/visualize_ros2_bags/ros_bags/simulations/sim21/rosbag2_2021_08_20-18_22_58/rosbag2_2021_08_20-18_22_58_0.db3')
 print(f'length of msg: {len(topics)}')
 print(f'msg keys: {topics.keys()}')
 
