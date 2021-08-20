@@ -54,14 +54,15 @@ def axisEqual3D(ax):
 def readTrajectory():
         
         # import csv file of measX and simU (noisy measurement)
-        ref_traj = pd.read_csv('/home/elie/CORO-IMARO/M2/Semester2/Coding/my_master_thesis/visualize_ros2_bags/reference_trajectories/globalsearch_1/measX.csv')
-        ref_U = pd.read_csv('/home/elie/CORO-IMARO/M2/Semester2/Coding/my_master_thesis/visualize_ros2_bags/reference_trajectories/globalsearch_1/simU.csv')
+        ref_traj = pd.read_csv('/home/elie/visualize_ros2_bags/reference_trajectories/globalsearch_1/measX.csv')
+        ref_U = pd.read_csv('/home/elie/visualize_ros2_bags/reference_trajectories/globalsearch_1/simU.csv')
 
         # ref_traj = pd.read_csv('/home/elie/ros_ws/src/ls2n_drone_ros2/ls2n_crazyflie_nmpc/traj/pol_9/patternsearch/measX.csv')
         # ref_U = pd.read_csv('/home/elie/ros_ws/src/ls2n_drone_ros2/ls2n_crazyflie_nmpc/traj/pol_9/patternsearch/simU.csv')
 
 
         # hovering time in the beginning of the trajectory
+        Ts = 0.01 # sample time
         T_hover = 2
         N = 50
 
@@ -112,10 +113,46 @@ def readTrajectory():
         qy_ref = quat_ref[:,2]
         qz_ref = quat_ref[:,3]
 
+        q_dot = get_q_dot(quat_ref,Ts,rows)
+        w_ref = get_angular_velocities(q_dot,quat_ref, rows)
         ref_traj = np.array([x_ref, y_ref, z_ref, qw_ref, qx_ref, qy_ref, qz_ref, vx_ref, vy_ref, vz_ref]).T
 
-        return ref_traj , ref_U
+        return ref_traj , ref_U, w_ref
 
+def get_q_dot(quat_ref,dt,rows):
+    
+    # declaring the q_dot variable
+    q_dot = np.zeros((quat_ref.shape[0]-1,quat_ref.shape[1]))
+    
+    # numerical differentiation
+    for i in range(rows-1):
+        q_dot[i] = (quat_ref[i+1] - quat_ref[i])/dt
+
+    return q_dot
+
+def get_angular_velocities(q_dot, quat_ref, rows):
+    
+    # declaring the w variable
+    w = np.zeros_like(q_dot)
+
+    for i in range(rows-1):
+        q_i  = Quaternion(quat_ref[i])
+        q_dot_i = Quaternion(q_dot[i])
+        temp = 2 * q_dot_i * q_i.inverse
+        w[i,0] = temp[0] 
+        w[i,1] = temp[1] 
+        w[i,2] = temp[2] 
+        w[i,3] = temp[3] 
+
+    w = np.vstack([ np.zeros((1,4),float),w]) # to account for the first row that was removed because of the derivatives
+    w = w[:,1:] # to remove the unwanted column and keep the angular velocities
+
+    # Extracting each angular velocity
+    # wx = w_stacked[:,0]
+    # wy = w_stacked[:,1]
+    # wz = w_stacked[:,2]
+
+    return w
 
 def euler_to_quaternion(roll, pitch, yaw):
     qx = np.sin(roll / 2) * np.cos(pitch / 2) * np.cos(yaw / 2) - np.cos(roll / 2) * np.sin(pitch / 2) * np.sin(yaw / 2)

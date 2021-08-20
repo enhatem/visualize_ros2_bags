@@ -4,11 +4,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from utils import *
+from mpl_toolkits.mplot3d import Axes3D
 # import casadi as cs
 
 
 # reading trajectory
-ref_traj, ref_U = readTrajectory()
+Ts = 0.01 # sample time
+ref_traj, ref_U, w_ref = readTrajectory()
+wx_ref = w_ref[:,0]
+wy_ref = w_ref[:,1]
+wz_ref = w_ref[:,2]
 
 x_ref = ref_traj[:,0]
 y_ref = ref_traj[:,1]
@@ -50,7 +55,7 @@ wx     = np.empty(0)
 wy     = np.empty(0)
 wz     = np.empty(0)
 
-topics = deserialize_rosbag('/home/elie/CORO-IMARO/M2/Semester2/Coding/my_master_thesis/visualize_ros2_bags/reference_trajectories/globalsearch_2/rosbag2_2021_08_16-09_02_14/rosbag2_2021_08_16-09_02_14_0.db3')
+topics = deserialize_rosbag('/home/elie/visualize_ros2_bags/ros_bags/simulations/sim14/rosbag2_2021_08_20-16_58_20/rosbag2_2021_08_20-16_58_20_0.db3')
 print(f'length of msg: {len(topics)}')
 print(f'msg keys: {topics.keys()}')
 
@@ -66,7 +71,7 @@ for timestamp, msg in (topics["/Drone1/track"]):
 
 start_time = -1
 for i in range( len(starting_command) ):
-    #print(starting_command[i])
+    # print(starting_command[i])
     if starting_command[i].data == True :
         start_time = time_[i]
         break
@@ -74,28 +79,28 @@ for i in range( len(starting_command) ):
 
 
 for timestamp, msg in (topics["/Drone1/EKF/odom"]):
-        if timestamp >= start_time:
-            time = np.append(time, timestamp)
-            x  = np.append(x, msg.pose.pose.position.x)
-            y  = np.append(y, msg.pose.pose.position.y)
-            z  = np.append(z, msg.pose.pose.position.z)
+    if timestamp >= start_time:
+        time = np.append(time, timestamp)
+        x  = np.append(x, msg.pose.pose.position.x)
+        y  = np.append(y, msg.pose.pose.position.y)
+        z  = np.append(z, msg.pose.pose.position.z)
 
-            qx = np.append(qx, msg.pose.pose.orientation.x)
-            qy = np.append(qy, msg.pose.pose.orientation.y) 
-            qz = np.append(qz, msg.pose.pose.orientation.z)
-            qw = np.append(qw, msg.pose.pose.orientation.w)
+        qx = np.append(qx, msg.pose.pose.orientation.x)
+        qy = np.append(qy, msg.pose.pose.orientation.y) 
+        qz = np.append(qz, msg.pose.pose.orientation.z)
+        qw = np.append(qw, msg.pose.pose.orientation.w)
 
-            vx = np.append(vx, msg.twist.twist.linear.x)
-            vy = np.append(vy, msg.twist.twist.linear.y)
-            vz = np.append(vz, msg.twist.twist.linear.z)
+        vx = np.append(vx, msg.twist.twist.linear.x)
+        vy = np.append(vy, msg.twist.twist.linear.y)
+        vz = np.append(vz, msg.twist.twist.linear.z)
 
 for timestamp, msg in (topics["/Drone1/RatesThrustSetPoint"]):
-        if timestamp >= start_time:
-            # time = np.append(time, timestamp)
-            Thrust  = np.append(Thrust, msg.thrust)
-            wx  = np.append(wx, msg.rates[0])
-            wy  = np.append(wy, msg.rates[1])
-            wz  = np.append(wz, msg.rates[2])
+    if timestamp >= start_time:
+        # time = np.append(time, timestamp)
+        Thrust  = np.append(Thrust, msg.thrust)
+        wx  = np.append(wx, msg.rates[0])
+        wy  = np.append(wy, msg.rates[1])
+        wz  = np.append(wz, msg.rates[2])
 
 
 # converting quaterions to Euler angles
@@ -254,14 +259,17 @@ fig6, (ax11,ax12,ax13) = plt.subplots(nrows=3, ncols=1, sharex=True)
 ax11.set_title('Angular rates Inputs')
 
 ax11.plot(time,wx,label='$\omega_x$')
+ax11.plot(time,wx_ref,label='$\omega_{x_{ref}}$')
 ax11.set_ylabel('$\omega_x$ [N]')
 ax11.legend()
 
 ax12.plot(time,wy,label='$\omega_y$')
+ax12.plot(time,wy_ref,label='$\omega_{y_{ref}}$')
 ax12.set_ylabel('$\omega_y$ [N]')
 ax12.legend()
 
 ax13.plot(time,wz,label='$\omega_z$')
+ax13.plot(time,wz_ref,label='$\omega_{z_{ref}}$')
 ax13.set_xlabel('Time [s]')
 ax13.set_ylabel('$\omega_z$ [N]')
 ax13.legend()

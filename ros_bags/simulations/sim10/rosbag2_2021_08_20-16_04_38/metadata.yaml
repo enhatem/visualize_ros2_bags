@@ -1,0 +1,31 @@
+rosbag2_bagfile_information:
+  version: 4
+  storage_identifier: sqlite3
+  relative_file_paths:
+    - rosbag2_2021_08_20-16_04_38_0.db3
+  duration:
+    nanoseconds: 18999850903
+  starting_time:
+    nanoseconds_since_epoch: 1629468312526011074
+  message_count: 20
+  topics_with_message_count:
+    - topic_metadata:
+        name: /Drone1/track
+        type: std_msgs/msg/Bool
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 20
+    - topic_metadata:
+        name: /Drone1/EKF/odom
+        type: nav_msgs/msg/Odometry
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 0
+    - topic_metadata:
+        name: /Drone1/RatesThrustSetPoint
+        type: ls2n_interfaces/msg/RatesThrustSetPoint
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 0
+  compression_format: ""
+  compression_mode: ""
