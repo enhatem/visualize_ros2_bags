@@ -55,7 +55,7 @@ wx     = np.empty(0)
 wy     = np.empty(0)
 wz     = np.empty(0)
 
-topics = deserialize_rosbag('/home/elie/visualize_ros2_bags/ros_bags/simulations/sim14/rosbag2_2021_08_20-16_58_20/rosbag2_2021_08_20-16_58_20_0.db3')
+topics = deserialize_rosbag('/home/elie/visualize_ros2_bags/ros_bags/simulations/sim20/rosbag2_2021_08_20-18_07_26/rosbag2_2021_08_20-18_07_26_0.db3')
 print(f'length of msg: {len(topics)}')
 print(f'msg keys: {topics.keys()}')
 
